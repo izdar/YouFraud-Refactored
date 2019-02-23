@@ -17,7 +17,7 @@ import re
 import os
 
 data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\dataset.json')))
-data_test = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\data_test.json')))
+# data_test = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\data_test.json')))
 dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\benignData.json')))
 
 description=[]
@@ -38,19 +38,6 @@ index=[]
 highRisk = {}
 mediumRisk = {}
 
-for i in range(len(data_test['videoId'])):
-	if data_test['videoId'][i][32:]=='https://www.youtube.com/watch?v=F1-poGrDhCI':
-		# print 'h'
-		print data_test['classification'][i]
-for i in range(len(data_test['videoId'])):
-	for j in range(len(data['videoId'])):
-		if data_test['videoId'][i][64:] == data['videoId'][j]:
-			highRisk[i] = data['mcafeeHighRisk'][j]
-			mediumRisk[i] = data['mcafeeMediumRisk'][j]
-			break
-
-data_test['mcafeeHighRisk'] = highRisk
-data_test['mcafeeMediumRisk'] = mediumRisk
 
 en_stop = get_stop_words('en')
 
@@ -65,24 +52,24 @@ for i in range(len(data['videoId'])):
 			videos.append(data['title'][i].encode('ascii','ignore')+str(data['tags'][i]))
 			index.append(i)		
 			y.append(data['classification'][i].lower())
-for i in range(len(data_test['videoId'])):
-	try:
-		videos.append(data_test['title'][i].encode('ascii','ignore')+data_test['description'][i].encode('ascii','ignore')+str(data_test['tags'][i]))
-		index.append(i+len(data['videoId']))
-		y.append(data_test['classification'][i].lower())	
-	except:
-		videos.append(data_test['title'][i].encode('ascii','ignore')+str(data_test['tags'][i]))
-		index.append(i+len(data['videoId']))
-		y.append(data_test['classification'][i].lower())
+# for i in range(len(data_test['videoId'])):
+# 	try:
+# 		videos.append(data_test['title'][i].encode('ascii','ignore')+data_test['description'][i].encode('ascii','ignore')+str(data_test['tags'][i]))
+# 		index.append(i+len(data['videoId']))
+# 		y.append(data_test['classification'][i].lower())	
+# 	except:
+# 		videos.append(data_test['title'][i].encode('ascii','ignore')+str(data_test['tags'][i]))
+# 		index.append(i+len(data['videoId']))
+# 		y.append(data_test['classification'][i].lower())
 
 for i in range(len(dataBenign['videoId'])):
 	try:
 		videos.append(dataBenign['title'][i].encode('ascii','ignore')+dataBenign['description'][i].encode('ascii','ignore')+str(dataBenign['tags'][i]))
-		index.append(i+len(data['videoId'])+len(data_test['videoId']))
+		index.append(i+len(data['videoId']))
 		y.append(dataBenign['classification'][i].lower())	
 	except:
 		videos.append(dataBenign['title'][i].encode('ascii','ignore')+str(dataBenign['tags'][i]))
-		index.append(i+len(data['videoId'])+len(data_test['videoId']))
+		index.append(i+len(data['videoId']))
 		y.append(dataBenign['classification'][i].lower())
 
 tokenizer = RegexpTokenizer(r'\w+')
@@ -137,12 +124,12 @@ for i in range(len(data['videoId'])):
 		except:
 			xTest1.append('No link content')
 
-for i in range(len(data_test['videoId'])):
-	for c in range(len(data_test['linkContent'][i])):
-		try:
-			xTest2.append(data_test['linkContent'][i][c])
-		except:
-			xTest2.append('No link content')
+# for i in range(len(data_test['videoId'])):
+# 	for c in range(len(data_test['linkContent'][i])):
+# 		try:
+# 			xTest2.append(data_test['linkContent'][i][c])
+# 		except:
+# 			xTest2.append('No link content')
 
 for i in range(len(dataBenign['videoId'])):
 	for c in range(len(dataBenign['linkContent'][i])):
@@ -235,18 +222,18 @@ for i in range(len(prediction1)):
 		unique_benign.append(videoLink1[i])
 		b+=1
 
-for i in range(len(data_test['videoId'])):
-	for c in range(len(data_test['linksUp'][i])):
-		videoLink2.append(data_test['linksUp'][i][c])
+# for i in range(len(data_test['videoId'])):
+# 	for c in range(len(data_test['linksUp'][i])):
+# 		videoLink2.append(data_test['linksUp'][i][c])
 
-for i in range(len(prediction2)):
-	# predClass.append(predictions[i])
-	if prediction2[i]=='f':
-		unique_fraud.append(videoLink2[i])
-		f+=1
-	elif prediction2[i]=='b':
-		unique_benign.append(videoLink2[i])
-		b+=1
+# for i in range(len(prediction2)):
+# 	# predClass.append(predictions[i])
+# 	if prediction2[i]=='f':
+# 		unique_fraud.append(videoLink2[i])
+# 		f+=1
+# 	elif prediction2[i]=='b':
+# 		unique_benign.append(videoLink2[i])
+# 		b+=1
 
 for i in range(len(dataBenign['videoId'])):
 	for c in range(len(dataBenign['linksUp'][i])):
