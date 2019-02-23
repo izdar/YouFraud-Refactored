@@ -27,26 +27,26 @@ def urlText(url):
 		print str(e)
 		return "link not found" 
 data = json.load(open('dataset.json'))
-data_test = json.load(open('data_test.json'))
+# data_test = json.load(open('data_test.json'))
 dataBenign= json.load(open('benignData.json'))
 
-data_test['linkContent'] = []
-for i in range(len(data_test['videoId'])):
-	linkContent = []
-	print str(100*(i/float(len(data_test['videoId']))))[:4]+'%'
+# data_test['linkContent'] = []
+# for i in range(len(data_test['videoId'])):
+# 	linkContent = []
+# 	print str(100*(i/float(len(data_test['videoId']))))[:4]+'%'
 	
 	
-	for c in data_test['linksUp'][i]:
-		linkContent.append(urlText(c))
-	data_test['linkContent'].append(linkContent)
+# 	for c in data_test['linksUp'][i]:
+# 		linkContent.append(urlText(c))
+# 	data_test['linkContent'].append(linkContent)
 
-with open('data_test.json','w') as f:
-	json.dump(data_test,f)
-# print "t2 DONE"
+# with open('data_test.json','w') as f:
+# 	json.dump(data_test,f)
+# # print "t2 DONE"
 
 
-print len(data_test['linkContent'])
-print len(data_test['videoId'])
+# print len(data_test['linkContent'])
+# print len(data_test['videoId'])
 
 
 data['linkContent'] = []
