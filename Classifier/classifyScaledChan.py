@@ -16,14 +16,12 @@ from nltk.tokenize import RegexpTokenizer
 import re
 import os
 
-# 4,6,7,13,14,15,22,23,24,27,30,31,35,38,39,43,44,45,49
 
 
 data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\dataset.json')))
-data_test = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\data_test.json')))
+# data_test = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\data_test.json')))
 dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\benignData.json')))
 
-# for i in range(50):
 
 description=[]
 tags=[]
@@ -40,22 +38,6 @@ videos = []
 test = []
 
 index=[]
-# highRisk = {}
-# mediumRisk = {}
-
-# for i in range(len(data_test['videoId'])):
-# 	if data_test['videoId'][i][32:]=='https://www.youtube.com/watch?v=F1-poGrDhCI':
-# 		# print 'h'
-# 		print data_test['classification'][i]
-# for i in range(len(data_test['videoId'])):
-# 	for j in range(len(data['videoId'])):
-# 		if data_test['videoId'][i][64:] == data['videoId'][j]:
-# 			highRisk[i] = data['mcafeeHighRisk'][j]
-# 			mediumRisk[i] = data['mcafeeMediumRisk'][j]
-# 			break
-
-# data_test['mcafeeHighRisk'] = highRisk
-# data_test['mcafeeMediumRisk'] = mediumRisk
 
 en_stop = get_stop_words('en')
 
@@ -70,24 +52,15 @@ for i in range(len(data['videoId'])):
 			videos.append(data['title'][i].encode('ascii','ignore')+str(data['tags'][i]))
 			index.append(i)		
 			y.append(data['classification'][i].lower())
-for i in range(len(data_test['videoId'])):
-	try:
-		videos.append(data_test['title'][i].encode('ascii','ignore')+data_test['description'][i].encode('ascii','ignore')+str(data_test['tags'][i]))
-		index.append(i+len(data['videoId']))
-		y.append(data_test['classification'][i].lower())	
-	except:
-		videos.append(data_test['title'][i].encode('ascii','ignore')+str(data_test['tags'][i]))
-		index.append(i+len(data['videoId']))
-		y.append(data_test['classification'][i].lower())
 
 for i in range(len(dataBenign['videoId'])):
 	try:
 		videos.append(dataBenign['title'][i].encode('ascii','ignore')+dataBenign['description'][i].encode('ascii','ignore')+str(dataBenign['tags'][i]))
-		index.append(i+len(data['videoId'])+len(data_test['videoId']))
+		index.append(i+len(data['videoId']))
 		y.append(dataBenign['classification'][i].lower())	
 	except:
 		videos.append(dataBenign['title'][i].encode('ascii','ignore')+str(dataBenign['tags'][i]))
-		index.append(i+len(data['videoId'])+len(data_test['videoId']))
+		index.append(i+len(data['videoId']))
 		y.append(dataBenign['classification'][i].lower())
 
 tokenizer = RegexpTokenizer(r'\w+')
@@ -122,13 +95,8 @@ y_train=y
 vectorizer = CountVectorizer()
 xTrain1 = vectorizer.fit_transform(videos)
 count=0
-# for f_index in range(29,50):
-# 	try:
 chanVideos=json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\AllClassifiedScaledChan.json')))
-# 	except:
-# 		print 'File not Found'
-# 		continue
-# def classify(chanVideos,xTrain1,y_train):
+
 for channel in chanVideos:
 	print str(100*(count/float(len(chanVideos))))[:4]+'%'
 	count+=1
@@ -197,7 +165,6 @@ with open('AllClassifiedScaledChan.json', 'w') as fp:
 fraudDict=json.load(open('fraudScaledChannels.json'))
 
 t=''
-# fraudDict={}
 uniqueFraudChan=[]
 
 for channel in clasChan:
@@ -219,8 +186,6 @@ for channel in clasChan:
 print len(clasChan)
 print len(uniqueFraudChan)
 print len(fraudDict)
-# with open('fraudChannels.txt','w') as f:
-# 	f.write(t)
 with open('fraudScaledChannels.json', 'w') as fp:
     json.dump(fraudDict, fp)
 
