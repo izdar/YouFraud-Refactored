@@ -35,7 +35,8 @@ import json
 # 			if data3['linksUp'][i][c] not in suspects:
 # 				suspects.append(data3['linksUp'][i][c])
 # print len(suspects)
-suspects = json.load(open('classifyDomains.json'))
+
+suspects = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\classifyDomains.json')))
 
 safe = ['youtube','twitter','insta','imgur','facebook','google','amazon','itunes','goo.gl','amzn','yout','blogspot']
 filtered = []
@@ -47,7 +48,7 @@ for video in suspects:
 	if c == 0:
 		filtered.append(video)
 
-with open('filteredList.json','w') as f:
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\filteredList.json'),'w') as f:
 	json.dump(filtered,f)
 
 final = []
@@ -62,5 +63,5 @@ for site in filtered:
 			final.append(site[:ind])
 			break
 
-with open('domainList.json','w') as f:
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\domainList.json'),'w') as f:
 	json.dump(final,f)

@@ -15,8 +15,9 @@ import nltk
 from nltk.tokenize import RegexpTokenizer
 import re
 
-data = json.load(open('dataset.json'))
-dataBenign= json.load(open('benignData.json'))
+data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json')))
+dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\benignData.json')))
+
 videos = []
 test = []
 
@@ -123,5 +124,5 @@ dict['falseNegatives']=fn
 
 print wrongPred
 
-with open('falseClassified.json', 'w') as fp:
+with open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\falseClassified.json')), 'w') as fp:
     json.dump(dict, fp)

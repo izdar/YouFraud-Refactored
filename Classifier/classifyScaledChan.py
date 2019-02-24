@@ -18,9 +18,9 @@ import os
 
 
 
-data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\dataset.json')))
+data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json')))
 # data_test = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\data_test.json')))
-dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\benignData.json')))
+dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\benignData.json')))
 
 
 description=[]
@@ -95,7 +95,7 @@ y_train=y
 vectorizer = CountVectorizer()
 xTrain1 = vectorizer.fit_transform(videos)
 count=0
-chanVideos=json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\AllClassifiedScaledChan.json')))
+chanVideos=json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\AllClassifiedScaledChan.json')))
 
 for channel in chanVideos:
 	print str(100*(count/float(len(chanVideos))))[:4]+'%'
@@ -159,10 +159,10 @@ for channel in chanVideos:
 	chanVideos[channel]['bcount']=b
 
 
-with open('AllClassifiedScaledChan.json', 'w') as fp:
+with open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\AllClassifiedScaledChan.json')), 'w') as fp:
     json.dump(chanVideos, fp)
 
-fraudDict=json.load(open('fraudScaledChannels.json'))
+fraudDict=json.load(open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\fraudScaledChannels.json'))))
 
 t=''
 uniqueFraudChan=[]
@@ -186,6 +186,6 @@ for channel in clasChan:
 print len(clasChan)
 print len(uniqueFraudChan)
 print len(fraudDict)
-with open('fraudScaledChannels.json', 'w') as fp:
+with open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\fraudScaledChannels.json')), 'w') as fp:
     json.dump(fraudDict, fp)
 

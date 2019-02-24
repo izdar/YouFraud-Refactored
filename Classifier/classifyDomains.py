@@ -16,9 +16,9 @@ from nltk.tokenize import RegexpTokenizer
 import re
 import os
 
-data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\dataset.json')))
+data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json')))
 # data_test = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\data_test.json')))
-dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\benignData.json')))
+dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\benignData.json')))
 
 description=[]
 tags=[]
@@ -248,5 +248,5 @@ for i in range(len(prediction3)):
 		b+=1
 # chanVideos[channel]['predClass']=predClass
 
-with open('classifyDomains.json', 'w') as fp:
+with open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\classifyDomains.json')), 'w') as fp:
     json.dump(unique_fraud,fp)

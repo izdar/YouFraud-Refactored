@@ -15,15 +15,15 @@ import nltk
 from nltk.tokenize import RegexpTokenizer
 import re
 
-data = json.load(open('dataset.json'))
-dataBenign= json.load(open('benignData.json'))
-
+data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json')))
+dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\benignData.json')))
 
 unique_fraud=[]
 unique_benign=[]
 predClass=[]
 
-dataScaled = json.load(open('uniqueScaled.json'))
+
+dataScaled = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\uniqueScaled.json')))
 
 
 videos = []
@@ -145,8 +145,7 @@ print 'Benign Count= ',b
 
 dataScaled['predClass']=predClass
 
-with open('scaledFraud.txt','w') as f:
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\scaledFraud.txt'),'w') as f:
 	f.write(t)
-
-with open('uniqueScaled.json', 'w') as fp:
-        json.dump(dataScaled, fp)
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\uniqueScaled.json'), 'w') as fp:
+    json.dump(dataScaled, fp)

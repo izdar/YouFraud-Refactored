@@ -123,14 +123,16 @@ def search(query,numOfResults):
     # data = json.load(open('dataScaled.json'))
     # for keys in youtube_dict:
     #     data[keys] += youtube_dict[keys]
-    with open('affiliateMarketing.json', 'w') as fp:
+    
+
+    with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\affiliateMarketing.json'), 'w') as fp:
         json.dump(youtube_dict, fp)
     print threading.currentThread().getName()+' WRITING TO JSON FILE'
     threadLock.release()
 threadLock=threading.Lock()
 
 index=1
-with open('queries.txt','r') as f:
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\queries.txt'),'r') as f:
     for query in f:
         threading.Thread(name=str(index),target=search,args=(query,100)).start()
         index+=1

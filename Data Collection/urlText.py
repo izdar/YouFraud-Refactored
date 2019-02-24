@@ -26,9 +26,11 @@ def urlText(url):
 		print url
 		print str(e)
 		return "link not found" 
-data = json.load(open('dataset.json'))
+		
+data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json')))
 # data_test = json.load(open('data_test.json'))
-dataBenign= json.load(open('benignData.json'))
+
+dataBenign= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\benignData.json')))
 
 # data_test['linkContent'] = []
 # for i in range(len(data_test['videoId'])):
@@ -57,7 +59,7 @@ for i in range(len(data['videoId'])):
 	for c in data['linksUp'][i]:
 		linkContent.append(urlText(c))
 	data['linkContent'].append(linkContent)
-with open('dataset.json','w') as f:
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json'),'w') as f:
 	json.dump(data,f)
 # print "t1 DONE"
 print len(data['linkContent'])
@@ -75,7 +77,7 @@ for i in range(len(dataBenign['videoId'])):
 print len(dataBenign['linkContent'])
 print len(dataBenign['videoId'])
 
-with open('benignData.json','w') as f:
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\benignData.json'),'w') as f:
 	json.dump(dataBenign,f)
 # print "t3 DONE"
 

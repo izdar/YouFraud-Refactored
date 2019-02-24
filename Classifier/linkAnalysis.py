@@ -5,6 +5,8 @@ import url
 import urllib2
 import threading
 import httplib2
+import os
+
 
 uniqueLinks = []
 lock=0
@@ -42,7 +44,9 @@ def linkWork():
 	classification=[]
 
 	notclassified=0
-	x = json.load(open('dataset.json'))
+	x = json.load(open(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\uniqueScaled.json'))
+	# x = json.load(open(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json'))
+
 
 	count=0.0
 	h = httplib2.Http(timeout=60)
@@ -101,7 +105,12 @@ def main():
 	global uniqueLinks
 	global linkResults
 	global lock
-	x = json.load(open('dataset.json'))
+	# if want to extract scaled down links, open dataset.json and comment line 112: 
+	# x = json.load(open(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json'))
+
+	# if want to extract scaled up links, open uniqueScaled.json and comment line 109: 
+	x = json.load(open(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\uniqueScaled.json'))
+
 	for i in range(len(x['videoId'])):
 		linkList=url.check(x['description'][i]+' ')
 		if linkList == None:

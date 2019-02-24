@@ -13,7 +13,8 @@ DEVELOPER_KEY = 'AIzaSyClserQ1cuNOX9SssQT6-BvBf65JZZ1Lk4'
 youtube = build('youtube', 'v3', developerKey=DEVELOPER_KEY)
 
 channels = []
-with open('channels.txt','r') as f:
+
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\channels.txt','r')) as f:
 	channels = [line[:-1] for line in f]
 
 chan = {}
@@ -88,7 +89,8 @@ for channel in channels:
 
 
 print chan.keys()
-with open('domainChannelsVids.json','w') as f:
+
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\domainChannelsVids.json','w')) as f:
 	json.dump(chan,f)
 
 	

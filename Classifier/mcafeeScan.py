@@ -11,7 +11,7 @@ import json
 import requests
 
 def Scan():
-	data = json.load(open('dataset.json'))
+	data = json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json')))
 	uniqueLinks=[] 
 	linkDetect={}
 	detectFeature=['status','categorization','reputation']
@@ -51,10 +51,10 @@ def Scan():
 			print linkDetect[link]
 		except Exception,e:
 			print "error"
-	with open('linkDetect.json', 'w') as fp:
+	with open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\linkDetect.json')), 'w') as fp:
 		json.dump(linkDetect,fp)
 
-	linkDetect = json.load(open('linkDetect.json'))
+	linkDetect = json.load(open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Classifier\\Data Files\\linkDetect.json'))))
 
 	total = []
 	mcafeeHighRisk=[]
@@ -102,5 +102,6 @@ def Scan():
 	data['mcafeeMediumRisk'] = mcafeeMediumRisk
 	data['mcafeeUnverified'] = mcafeeUnverified
 	data['commonMal']=commonMal
-	with open('dataset.json', 'w') as fp:
+
+	with open((os.path.normpath(os.getcwd() + os.sep + os.pardir + '\\Data Collection\\Data Files\\dataset.json')), 'w') as fp:
 		json.dump(data,fp)
