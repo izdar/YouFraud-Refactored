@@ -7,15 +7,73 @@ import threading
 import httplib2
 import os
 import requests
+from fake_useragent import UserAgent
+from bs4 import BeautifulSoup
+import Queue as queue
+import cfscrape
+import time
+from tqdm import tqdm
+import datetime
+from dateutil import parser
+
+
 
 data = json.load(open(os.getcwd() + os.sep + os.pardir + '/Data Collection/Data Files/dataset.json'))
 dataT= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Data Collection/Data Files/trainDataf2.json')))
 dataB= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Data Collection/Data Files/benignData.json')))
 
-def filteredLink(url):
+def fetch_proxies():
+    scraper = cfscrape.create_scraper()
+    print 'hereeee'
+    proxies = []
+    PROXY_URLS = ["https://hidemy.name/en/proxy-list/"]
+    for url in PROXY_URLS:
+        success = False
+        while not success:
+            try:
+                random_agent = global_ua.random
+                headers = {'User-Agent': random_agent}
+                soup = BeautifulSoup(scraper.get(url, headers=headers).text, "html.parser")
+                print 'stupd'
+                for row in soup.findAll('table')[0].tbody.findAll('tr'):
+                    columns = row.findAll('td')
+                    ip = columns[0].contents[0]
+                    port = columns[1].contents[0]
+                    ping = int(row.findAll('p')[0].contents[0].split(" ")[0])
+                    protocol = columns[4].contents[0].split(',')[0].lower()
+                    proxies.append((ip, port, ping, protocol))
+                success = True
+                if(os.path.exists('../record.csv') == False):
+                    with open('../record.csv','w') as csv_file:
+                        csv_writer = csv.writer(csv_file,delimiter=',')
+                        csv_writer.writerow(["Source","Time"])
+                with open('../record.csv','a') as csv_file:
+                    csv_writer = csv.writer(csv_file,delimiter=',')
+                    csv_writer.writerow(["BR",str(datetime.datetime.now())])
+
+            except Exception as ex:
+                print(ex)
+                print('Cannot get proxy')
+                success = False
+                exit()
+    filtered_proxies = [p for p in proxies if p[3] in ["http", "https"]]
+    return filtered_proxies
+
+
+def refresh_proxy_queue():
+    global proxy_queue
+    proxies = fetch_proxies()
+    for proxy in proxies:
+        proxy_queue.put(proxy)
+
+
+def filteredLink(url,headers,proxies):
 	try:
-		link = requests.get(url.encode('ascii','ignore')).url
+		link = requests.get(url.encode('ascii','ignore'),headers=headers,proxies=proxies).url
+	except requests.exceptions.MissingSchema:
+		link = requests.get('http://'+url.encode('ascii','ignore')).url
 	except Exception,e:
+		link = url
 		print str(e)
 
 	c=0
@@ -48,6 +106,11 @@ def filteredLink(url):
 	return link
 
 
+global proxy_queue, global_ua
+global_ua = UserAgent()
+proxy_queue = queue.Queue()
+
+refresh_proxy_queue()
 
 
 
@@ -62,8 +125,14 @@ for i in range(len(data['videoId'])):
 		# print linkList
 		completeDomains.append(linkList)
 		filteredList=[]
-		for c in range(len(linkList)) :
-			filteredList.append(filteredLink(linkList[c]))
+		for c in range(len(linkList)):
+			random_agent = global_ua.random
+			if proxy_queue.empty():
+				refresh_proxy_queue()
+			proxy = proxy_queue.get()
+			headers = {'User-Agent': random_agent}
+			proxies = {proxy[3]: "{0}://{1}:{2}".format(proxy[3], proxy[0], proxy[1])}
+			filteredList.append(filteredLink(linkList[c],headers,proxies))
 		domains.append(filteredList)
 		
 data['domains']=domains
