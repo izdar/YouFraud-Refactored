@@ -7,75 +7,13 @@ import threading
 import httplib2
 import os
 import requests
-from fake_useragent import UserAgent
-from bs4 import BeautifulSoup
-import Queue as queue
-import cfscrape
-import time
-from tqdm import tqdm
-import datetime
-from dateutil import parser
-
-
 
 data = json.load(open(os.getcwd() + os.sep + os.pardir + '/Data Collection/Data Files/dataset.json'))
 dataT= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Data Collection/Data Files/trainDataf2.json')))
 dataB= json.load(open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Data Collection/Data Files/benignData.json')))
 
-def fetch_proxies():
-    scraper = cfscrape.create_scraper()
-    print 'hereeee'
-    proxies = []
-    PROXY_URLS = ["https://hidemy.name/en/proxy-list/"]
-    for url in PROXY_URLS:
-        success = False
-        while not success:
-            try:
-                random_agent = global_ua.random
-                headers = {'User-Agent': random_agent}
-                soup = BeautifulSoup(scraper.get(url, headers=headers).text, "html.parser")
-                print 'stupd'
-                for row in soup.findAll('table')[0].tbody.findAll('tr'):
-                    columns = row.findAll('td')
-                    ip = columns[0].contents[0]
-                    port = columns[1].contents[0]
-                    ping = int(row.findAll('p')[0].contents[0].split(" ")[0])
-                    protocol = columns[4].contents[0].split(',')[0].lower()
-                    proxies.append((ip, port, ping, protocol))
-                success = True
-                if(os.path.exists('../record.csv') == False):
-                    with open('../record.csv','w') as csv_file:
-                        csv_writer = csv.writer(csv_file,delimiter=',')
-                        csv_writer.writerow(["Source","Time"])
-                with open('../record.csv','a') as csv_file:
-                    csv_writer = csv.writer(csv_file,delimiter=',')
-                    csv_writer.writerow(["BR",str(datetime.datetime.now())])
-
-            except Exception as ex:
-                print(ex)
-                print('Cannot get proxy')
-                success = False
-                exit()
-    filtered_proxies = [p for p in proxies if p[3] in ["http", "https"]]
-    return filtered_proxies
-
-
-def refresh_proxy_queue():
-    global proxy_queue
-    proxies = fetch_proxies()
-    for proxy in proxies:
-        proxy_queue.put(proxy)
-
-
-def filteredLink(url,headers,proxies):
-	try:
-		link = requests.get(url.encode('ascii','ignore'),headers=headers,proxies=proxies).url
-	except requests.exceptions.MissingSchema:
-		link = requests.get('http://'+url.encode('ascii','ignore')).url
-	except Exception,e:
-		link = url
-		print str(e)
-
+def filteredLink(link):
+	
 	c=0
 	ind = 0
 	for letter in link:
@@ -102,22 +40,24 @@ def filteredLink(url,headers,proxies):
 			link=link[:-1]
 	except:
 		print 'here'
-		# print link
+	print link
 	return link
 
 
-global proxy_queue, global_ua
-global_ua = UserAgent()
-proxy_queue = queue.Queue()
-
-refresh_proxy_queue()
 
 
 
+linkDict={}
 domains=[]
 completeDomains=[]
+count=0
+data['redirectedDomains']=[]
+dataB['redirectedDomains']=[]
+dataT['redirectedDomains']=[]
 
 for i in range(len(data['videoId'])):
+	count+=1
+	print str(100*(count/float(len(data['videoId']))))[:4]+'%'
 	linkList=url.check(data['description'][i]+' ')
 	if linkList == None:
 		continue
@@ -125,63 +65,135 @@ for i in range(len(data['videoId'])):
 		# print linkList
 		completeDomains.append(linkList)
 		filteredList=[]
+		redirectedDomains=[]
 		for c in range(len(linkList)):
-			random_agent = global_ua.random
-			if proxy_queue.empty():
-				refresh_proxy_queue()
-			proxy = proxy_queue.get()
-			headers = {'User-Agent': random_agent}
-			proxies = {proxy[3]: "{0}://{1}:{2}".format(proxy[3], proxy[0], proxy[1])}
-			filteredList.append(filteredLink(linkList[c],headers,proxies))
+			if linkList[c] not in linkDict:
+				try:
+					if linkList[c].find("http") == -1:
+						linkList[c] = "http://"+linkList[c]
+
+					link = requests.get(linkList[c].encode('ascii','ignore')).url
+				except Exception,e:
+					link=linkList[c]
+					print link,str(e)
+
+				filteredUrl=filteredLink(link)
+				linkDict[linkList[c]]=(link,filteredUrl)
+				print linkDict[linkList[c]][0],linkDict[linkList[c]][1]
+
+			
+			redirectedDomains.append(linkDict[linkList[c]][0])
+			# else:
+			filteredList.append(linkDict[linkList[c]][1])
+		data['redirectedDomains'].append(redirectedDomains)
 		domains.append(filteredList)
 		
 data['domains']=domains
 data['completeDomains']=completeDomains
 
-# with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Classifier/Data Files/datasetLinks.json'), 'w') as fp:
-#     json.dump(data, fp)
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Classifier/Data Files/datasetLinks0.json'), 'w') as fp:
+    json.dump(data, fp)
 
+print 'Data Done'
 
 domains=[]
 completeDomains=[]
+count=0
 
 for i in range(len(dataB['videoId'])):
+	count+=1
+	print str(100*(count/float(len(dataB['videoId']))))[:4]+'%'
+	
 	linkList=url.check(dataB['description'][i]+' ')
 	if linkList == None:
 		continue
 	else:
 		completeDomains.append(linkList)
 		filteredList=[]
-		for c in range(len(linkList)) :
-			filteredList.append(filteredLink(linkList[c]))
+		redirectedDomains=[]
+
+		for c in range(len(linkList)):
+			if linkList[c] not in linkDict:
+				try:
+					if linkList[c].find("http") == -1:
+						linkList[c] = "http://"+linkList[c]
+
+					link = requests.get(linkList[c].encode('ascii','ignore')).url
+				except Exception,e:
+					link=linkList[c]
+					print link,str(e)
+
+				filteredUrl=filteredLink(link)
+				linkDict[linkList[c]]=(link,filteredUrl)
+				print linkDict[linkList[c]][0],linkDict[linkList[c]][1]
+
+			
+			redirectedDomains.append(linkDict[linkList[c]][0])
+			# else:
+			filteredList.append(linkDict[linkList[c]][1])
+		dataB['redirectedDomains'].append(redirectedDomains)
+				
+			# else:
+			# filteredList.append(linkDict[linkList[c]])
+			# filteredList.append(filteredLink(linkList[c]))
 		domains.append(filteredList)
 		
 			
 dataB['domains']=domains
 dataB['completeDomains']=completeDomains
 
-# with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Classifier/Data Files/benignDataLinks.json'), 'w') as fp:
-#     json.dump(dataB, fp)
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Classifier/Data Files/benignDataLinks0.json'), 'w') as fp:
+    json.dump(dataB, fp)
 
+print 'Data BenignDone'
 
 domains=[]
 completeDomains=[]
+count=0
 
 for i in range(len(dataT['videoId'])):
+	count+=1
+	print str(100*(count/float(len(dataT['videoId']))))[:4]+'%'
+	
 	linkList=url.check(dataT['description'][i]+' ')
 	if linkList == None:
 		continue
 	else:
 		completeDomains.append(linkList)
 		filteredList=[]
-		for c in range(len(linkList)) :
-			filteredList.append(filteredLink(linkList[c]))
+		redirectedDomains=[]
+
+		for c in range(len(linkList)):
+			if linkList[c] not in linkDict:
+				try:
+					if linkList[c].find("http") == -1:
+						linkList[c] = "http://"+linkList[c]
+
+					link = requests.get(linkList[c].encode('ascii','ignore')).url
+				except Exception,e:
+					link=linkList[c]
+					print link,str(e)
+
+				filteredUrl=filteredLink(link)
+				linkDict[linkList[c]]=(link,filteredUrl)
+			print linkDict[linkList[c]][0],linkDict[linkList[c]][1]
+			redirectedDomains.append(linkDict[linkList[c]][0])
+			# else:
+			filteredList.append(linkDict[linkList[c]][1])
+		dataT['redirectedDomains'].append(redirectedDomains)
+				# filteredUrl=filteredLink(linkList[c])
+				# linkDict[linkList[c]]=filteredUrl
+
+			# else:
+			# filteredList.append(linkDict[linkList[c]])
+			# filteredList.append(filteredLink(linkList[c]))
 		domains.append(filteredList)
 			
 
 dataT['domains']=domains
 dataT['completeDomains']=completeDomains
 
-with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Classifier/Data Files/trainDataf2Links.json'), 'w') as fp:
+with open(os.path.normpath(os.getcwd() + os.sep + os.pardir + '/Classifier/Data Files/trainDataf2Links0.json'), 'w') as fp:
     json.dump(dataT, fp)
+print 'DataT Done'
 
