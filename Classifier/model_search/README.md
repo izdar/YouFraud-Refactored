@@ -3,6 +3,8 @@ First I’ll verify the baseline model makes sense and tune it to optimal point
 - [ ] Verifying parameters/splits that it learns actually make sense
 - [x] Cross-validation for proper performance metrics
 - [x] Hyperparameter tuning 
+- [ ] Results on larger dataset
+- [ ] Which examples the model got wrong?
  
 Then I will search for a better model than the baseline
 - [ ] Model search
