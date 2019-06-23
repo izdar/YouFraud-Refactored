@@ -1,6 +1,6 @@
 First I’ll verify the baseline model makes sense and tune it to optimal point
 - [x] Analyze baseline model (the one previously made)
-- [ ] Verifying parameters/splits that it learns actually make sense
+- [x] Verifying parameters/splits that it learns actually make sense
 - [x] Cross-validation for proper performance metrics
 - [x] Hyperparameter tuning 
 - [ ] Results on larger dataset
