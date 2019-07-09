@@ -3,6 +3,7 @@ First I’ll verify the baseline model makes sense and tune it to optimal point
 - [x] Verifying parameters/splits that it learns actually make sense
 - [x] Cross-validation for proper performance metrics
 - [x] Hyperparameter tuning 
+- [x] Explore decision tree depths (since default optimal value is too high - 60)
 - [x] Results on larger dataset
 - [x] Which examples the model got wrong?
  
