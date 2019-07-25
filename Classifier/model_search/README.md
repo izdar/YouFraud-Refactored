@@ -15,7 +15,7 @@ Then I will search for a better model than the baseline
  
 Now I will explore different features and their encodings 
 - [ ] Feature Engineering
-- [ ] Predictive power of features to predict class labels (mutual info/Correlation/covariance)
+- [x] Predictive power of features to predict class labels (mutual info/Correlation/covariance)
 - [ ] Subsets of features (urls and tokens)
 - [ ] unigrams/bigrams/trigrams
 - [ ] Different encoding methods (BOW/tf-idf/word embeddings)
