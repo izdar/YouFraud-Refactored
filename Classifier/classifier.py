@@ -74,7 +74,7 @@ for i in range(len(data['videoId'])):
 
 for i in range(len(dataBenign['videoId'])):
 	if dataBenign['videoId'][i] not in uniqueVid:
-		uniqueVid.append(data['videoId'][i])
+		uniqueVid.append(dataBenign['videoId'][i])
 
 		whatsappFeature=[]
 		playstoreFeature=[]
